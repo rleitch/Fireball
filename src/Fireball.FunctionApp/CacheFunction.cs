@@ -1,32 +1,43 @@
-using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Fireball.FunctionApp.Configuration;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Caching.Distributed;
+using System.IO;
 
 namespace Fireball.FunctionApp
 {
-    public class CacheFunction(IOptions<Settings> settings)
+    public class CacheFunction(IOptions<Settings> settings, IDistributedCache cache)
     {
         private readonly Settings _settings = settings.Value;
+        private readonly IDistributedCache _cache = cache;
 
-        [FunctionName("Cache")]
-        public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+        [FunctionName("get")]
+        public async Task<IActionResult> Get(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "{key}")] HttpRequest req,
+            string key,
             ILogger log)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
+            var cachedString = await _cache.GetStringAsync(key);
+            return cachedString == null 
+                ? new NotFoundResult() 
+                : new OkObjectResult(cachedString);
+        }
 
-            string responseMessage = string.IsNullOrEmpty(_settings.Name)
-                ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
-                : $"Hello, {_settings.Name}. This HTTP triggered function executed successfully.";
-
-            return new OkObjectResult(responseMessage);
+        [FunctionName("post")]
+        public async Task<IActionResult> Post(
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "{key}")] HttpRequest req,
+            string key,
+            ILogger log)
+        {
+            using var sr = new StreamReader(req.Body);
+            var requestBody = await sr.ReadToEndAsync();
+            await _cache.SetStringAsync(key, requestBody, new DistributedCacheEntryOptions());
+            return new AcceptedResult();
         }
     }
 }
