@@ -4,17 +4,22 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Fireball.FunctionApp.Configuration;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Caching.Distributed;
 using System.IO;
+using System.Globalization;
+using System;
+using System.Linq;
+using System.Text;
+using Fireball.FunctionApp.Extensions;
 
 namespace Fireball.FunctionApp
 {
-    public class CacheFunction(IOptions<Settings> settings, IDistributedCache cache)
+    public class CacheFunction(IDistributedCache cache)
     {
-        private readonly Settings _settings = settings.Value;
         private readonly IDistributedCache _cache = cache;
+
+        private const byte CompressedFlag = 0x01;
+        private const byte UncompressedFlag = 0x00;
 
         [FunctionName("get")]
         public async Task<IActionResult> Get(
@@ -22,10 +27,10 @@ namespace Fireball.FunctionApp
             string key,
             ILogger log)
         {
-            var cachedString = await _cache.GetStringAsync(key);
-            return cachedString == null 
+            var cachedData = await GetStringAsync(key);
+            return cachedData == null 
                 ? new NotFoundResult() 
-                : new OkObjectResult(cachedString);
+                : new OkObjectResult(cachedData);
         }
 
         [FunctionName("post")]
@@ -34,10 +39,67 @@ namespace Fireball.FunctionApp
             string key,
             ILogger log)
         {
-            using var sr = new StreamReader(req.Body);
-            var requestBody = await sr.ReadToEndAsync();
-            await _cache.SetStringAsync(key, requestBody, new DistributedCacheEntryOptions());
+            DistributedCacheEntryOptions options = new();
+            
+            if (TimeSpan.TryParseExact(req.Query["absoluteExpiration"], "ddhhmmss", CultureInfo.InvariantCulture, out TimeSpan absoluteExpiration))
+            {
+                options.SetAbsoluteExpiration(absoluteExpiration);
+            }
+
+            if (TimeSpan.TryParseExact(req.Query["slidingExpiration"], "ddhhmmss", CultureInfo.InvariantCulture, out TimeSpan slidingExpiration))
+            {
+                options.SetSlidingExpiration(slidingExpiration);
+            }
+
+            byte[] requestBody;
+            using (var ms = new MemoryStream())
+            {
+                await req.Body.CopyToAsync(ms);
+                requestBody = ms.ToArray();
+            }
+
+            await SetAsync(key, requestBody, options);
             return new AcceptedResult();
+        }
+
+        [FunctionName("put")]
+        public async Task<IActionResult> Put(
+            [HttpTrigger(AuthorizationLevel.Function, "put", Route = "{key}")] HttpRequest req,
+            string key,
+            ILogger log)
+        {
+            await _cache.RefreshAsync(key);
+            return new AcceptedResult();
+        }
+
+        [FunctionName("delete")]
+        public async Task<IActionResult> Delete(
+            [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "{key}")] HttpRequest req,
+            string key,
+            ILogger log)
+        {
+            await _cache.RemoveAsync(key);
+            return new AcceptedResult();
+        }
+
+        public async Task SetAsync(string key, byte[] uncompressedData, DistributedCacheEntryOptions options)
+        {
+            byte[] data = uncompressedData.Length > 1024 
+                ? ([CompressedFlag, .. uncompressedData.CompressBytes()]) 
+                : ([UncompressedFlag, .. uncompressedData]);
+            await _cache.SetAsync(key, data, options);
+        }
+        public async Task<string> GetStringAsync(string key)
+        {
+            var cachedData = await _cache.GetAsync(key);
+            if(cachedData == null || cachedData.Length == 0)
+            {
+                return null;
+            }
+
+            byte flag = cachedData[0];
+            byte[] dataBuffer = cachedData.Skip(1).ToArray();
+            return flag == CompressedFlag ? dataBuffer.DecompressString() : Encoding.UTF8.GetString(dataBuffer);
         }
     }
 }
