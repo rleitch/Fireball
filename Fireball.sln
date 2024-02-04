@@ -7,7 +7,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2EE5C04B-805
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{F77C662D-AE7E-4CE1-93E2-A016AC0C60D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fireball.FunctionApp", "src\Fireball.FunctionApp\Fireball.FunctionApp.csproj", "{B5032928-AAFF-49B0-81A0-1816CC5E53F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fireball.FunctionApp", "src\Fireball.FunctionApp\Fireball.FunctionApp.csproj", "{B5032928-AAFF-49B0-81A0-1816CC5E53F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fireball.Client", "src\Fireball.Client\Fireball.Client.csproj", "{8D901696-167E-4467-B35F-C33BD11EA58D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fireball.Common", "src\Fireball.Common\Fireball.Common.csproj", "{D3A9B25C-DA9F-4ECF-A67B-AE828F509DF6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,12 +23,22 @@ Global
 		{B5032928-AAFF-49B0-81A0-1816CC5E53F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B5032928-AAFF-49B0-81A0-1816CC5E53F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B5032928-AAFF-49B0-81A0-1816CC5E53F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D901696-167E-4467-B35F-C33BD11EA58D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D901696-167E-4467-B35F-C33BD11EA58D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D901696-167E-4467-B35F-C33BD11EA58D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D901696-167E-4467-B35F-C33BD11EA58D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3A9B25C-DA9F-4ECF-A67B-AE828F509DF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3A9B25C-DA9F-4ECF-A67B-AE828F509DF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3A9B25C-DA9F-4ECF-A67B-AE828F509DF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3A9B25C-DA9F-4ECF-A67B-AE828F509DF6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B5032928-AAFF-49B0-81A0-1816CC5E53F5} = {2EE5C04B-8055-415B-B2C7-166EBF5A4ABB}
+		{8D901696-167E-4467-B35F-C33BD11EA58D} = {2EE5C04B-8055-415B-B2C7-166EBF5A4ABB}
+		{D3A9B25C-DA9F-4ECF-A67B-AE828F509DF6} = {2EE5C04B-8055-415B-B2C7-166EBF5A4ABB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {147DA676-A38A-4567-8C94-B79E908C4DA3}

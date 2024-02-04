@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Caching.Distributed;
 using System.IO;
-using System.Globalization;
 using System;
 using System.Linq;
 using System.Text;
 using Fireball.FunctionApp.Extensions;
+using Fireball.Common;
 
 namespace Fireball.FunctionApp
 {
@@ -40,15 +40,15 @@ namespace Fireball.FunctionApp
             ILogger log)
         {
             DistributedCacheEntryOptions options = new();
-            
-            if (TimeSpan.TryParseExact(req.Query["absoluteExpiration"], "ddhhmmss", CultureInfo.InvariantCulture, out TimeSpan absoluteExpiration))
+
+            if (TimeSpan.TryParse(Uri.UnescapeDataString(req.Query[QueryStringKeys.AbsoluteExpiration]), out TimeSpan absoluteExpiration))
             {
                 options.SetAbsoluteExpiration(absoluteExpiration);
             }
 
-            if (TimeSpan.TryParseExact(req.Query["slidingExpiration"], "ddhhmmss", CultureInfo.InvariantCulture, out TimeSpan slidingExpiration))
+            if (TimeSpan.TryParse(Uri.UnescapeDataString(req.Query[QueryStringKeys.SlidingExpiration]), out TimeSpan slidingExpiration))
             {
-                options.SetSlidingExpiration(slidingExpiration);
+                options.SetAbsoluteExpiration(absoluteExpiration);
             }
 
             byte[] requestBody;
