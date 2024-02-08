@@ -1,4 +1,6 @@
-﻿namespace Fireball.Client.Configuration
+﻿using System;
+
+namespace Fireball.Client.Configuration
 {
     public interface IFireballClientSettings
     {

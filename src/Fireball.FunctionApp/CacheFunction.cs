@@ -1,7 +1,5 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Caching.Distributed;
@@ -14,12 +12,17 @@ using Fireball.Common;
 
 namespace Fireball.FunctionApp
 {
-    public class CacheFunction(IDistributedCache cache)
+    public class CacheFunction
     {
-        private readonly IDistributedCache _cache = cache;
+        private readonly IDistributedCache _cache;
 
         private const byte CompressedFlag = 0x01;
         private const byte UncompressedFlag = 0x00;
+
+        public CacheFunction(IDistributedCache cache)
+        {
+            _cache = cache;
+        }
 
         [FunctionName("get")]
         public async Task<IActionResult> Get(
@@ -84,9 +87,9 @@ namespace Fireball.FunctionApp
 
         public async Task SetAsync(string key, byte[] uncompressedData, DistributedCacheEntryOptions options)
         {
-            byte[] data = uncompressedData.Length > 1024 
-                ? ([CompressedFlag, .. uncompressedData.CompressBytes()]) 
-                : ([UncompressedFlag, .. uncompressedData]);
+            byte[] data = uncompressedData.Length > 1024
+                ? uncompressedData.CompressBytes().Prepend(CompressedFlag).ToArray()
+                : uncompressedData.Prepend(UncompressedFlag).ToArray();
             await _cache.SetAsync(key, data, options);
         }
         public async Task<string> GetStringAsync(string key)

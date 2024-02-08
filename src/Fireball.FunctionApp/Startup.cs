@@ -1,5 +1,4 @@
-﻿using Fireball.FunctionApp.Configuration;
-using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Data.SqlClient;
@@ -23,11 +22,6 @@ namespace Fireball.FunctionApp
                 options.SchemaName = "dbo";
                 options.TableName = "DistributedCache";
             });
-            builder.Services.AddOptions<Settings>()
-                .Configure<IConfiguration>((settings, configuration) =>
-                {
-                    configuration.GetSection(nameof(Settings)).Bind(settings);
-                });
         }
 
         private void InitializeDatabase()

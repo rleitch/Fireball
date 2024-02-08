@@ -9,9 +9,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{F77C662D-A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fireball.FunctionApp", "src\Fireball.FunctionApp\Fireball.FunctionApp.csproj", "{B5032928-AAFF-49B0-81A0-1816CC5E53F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fireball.Client", "src\Fireball.Client\Fireball.Client.csproj", "{8D901696-167E-4467-B35F-C33BD11EA58D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fireball.Client", "src\Fireball.Client\Fireball.Client.csproj", "{8D901696-167E-4467-B35F-C33BD11EA58D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fireball.Common", "src\Fireball.Common\Fireball.Common.csproj", "{D3A9B25C-DA9F-4ECF-A67B-AE828F509DF6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fireball.Common", "src\Fireball.Common\Fireball.Common.csproj", "{D3A9B25C-DA9F-4ECF-A67B-AE828F509DF6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
