@@ -1,4 +1,6 @@
-﻿namespace Fireball.Common.Extensions
+﻿using System;
+
+namespace Fireball.Common.Extensions
 {
     public static class TimeSpanExtensions
     {
