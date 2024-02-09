@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace Fireball.FunctionApp.Extensions
+namespace Fireball.Common.Extensions
 {
     public static class CompressionExtensions
     {
