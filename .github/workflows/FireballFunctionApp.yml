@@ -3,13 +3,16 @@ on:
   push:
     branches:
     - main
+  pull_request:
+    branches:
+    - main
 env:
   AZURE_FUNCTIONAPP_NAME: FireballFunctionApp
   AZURE_FUNCTIONAPP_PACKAGE_PATH: src\Fireball.FunctionApp\published
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 8.0.x
   WORKING_DIRECTORY: src\Fireball.FunctionApp
-  DOTNET_CORE_VERSION_INPROC: 6.0.x
+  DOTNET_CORE_VERSION_INPROC: 8.0.x
 jobs:
   build:
     runs-on: windows-latest
