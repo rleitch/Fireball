@@ -3,9 +3,6 @@ on:
   push:
     branches:
     - main
-  pull_request:
-    branches:
-    - main
 env:
   AZURE_FUNCTIONAPP_NAME: FireballFunctionApp
   AZURE_FUNCTIONAPP_PACKAGE_PATH: src\Fireball.FunctionApp\published
