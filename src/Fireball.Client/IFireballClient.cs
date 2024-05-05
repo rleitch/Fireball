@@ -9,9 +9,9 @@ namespace Fireball.Client
     {
         Task DeleteAsync(string key, CancellationToken cancellationToken = default);
 
-        Task<string> GetStringAsync(string key, CancellationToken cancellationToken = default);
+        Task<string> GetAsync(string key, CancellationToken cancellationToken = default);
 
-        Task<T?> GetFromJsonAsync<T>(string key, JsonSerializerOptions jsonSerializerOptions = null, CancellationToken cancellationToken = default);
+        Task<T> GetAsync<T>(string key, JsonSerializerOptions jsonSerializerOptions = null, CancellationToken cancellationToken = default);
 
         Task RefreshAsync(string key, CancellationToken cancellationToken = default);
 
@@ -21,6 +21,13 @@ namespace Fireball.Client
             TimeSpan? absoluteExpiration = null,
             TimeSpan? slidingExpiration = null,
             JsonSerializerOptions jsonSerializerOptions = null,
+            CancellationToken cancellationToken = default);
+
+        Task SetStringAsync(
+            string key,
+            string value,
+            TimeSpan? absoluteExpiration = null,
+            TimeSpan? slidingExpiration = null,
             CancellationToken cancellationToken = default);
     }
 }

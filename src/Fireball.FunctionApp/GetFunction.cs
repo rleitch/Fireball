@@ -22,7 +22,7 @@ namespace Fireball.FunctionApp
             var cachedData = await _cache.GetAsync(key);
             if (cachedData == null || cachedData.Length == 0)
             {
-                return new NotFoundResult();
+                return new NoContentResult();
             }
 
             byte flag = cachedData[0];
