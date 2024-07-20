@@ -28,7 +28,14 @@ namespace Fireball.Client
 
         public async Task<T> GetAsync<T>(string key, JsonSerializerOptions jsonSerializerOptions = null, CancellationToken cancellationToken = default)
         {
-            return await _httpClient.GetFromJsonAsync<T>(key, jsonSerializerOptions, cancellationToken);
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<T>(key, jsonSerializerOptions, cancellationToken);
+            }
+            catch (JsonException)
+            {
+                return default;
+            }
         }
 
         public async Task RefreshAsync(string key, CancellationToken cancellationToken = default)

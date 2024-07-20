@@ -13,7 +13,7 @@ namespace Fireball.FunctionApp
         private readonly IDistributedCache _cache = cache;
 
         [Function("DeleteFunction")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "{key}")] HttpRequest req, string key)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "delete", Route = "{key}")] HttpRequest req, string key)
         {
             await _cache.RemoveAsync(key);
             return new AcceptedResult();

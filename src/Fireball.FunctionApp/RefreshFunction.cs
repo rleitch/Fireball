@@ -13,7 +13,7 @@ namespace Fireball.FunctionApp
         private readonly IDistributedCache _cache = cache;
 
         [Function("RefreshFunction")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "{key}")] HttpRequest req, string key)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "put", Route = "{key}")] HttpRequest req, string key)
         {
             await _cache.RefreshAsync(key);
             return new AcceptedResult();

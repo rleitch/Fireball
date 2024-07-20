@@ -19,7 +19,7 @@ namespace Fireball.FunctionApp
         private readonly IDistributedCache _cache = cache;
 
         [Function("SetFunction")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "{key}")] HttpRequest req, string key)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "{key}")] HttpRequest req, string key)
         {
             DistributedCacheEntryOptions options = new();
 

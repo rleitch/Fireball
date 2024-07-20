@@ -17,7 +17,7 @@ namespace Fireball.FunctionApp
         private readonly IDistributedCache _cache = cache;
 
         [Function("GetFunction")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{key}")] HttpRequest req, string key)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "{key}")] HttpRequest req, string key)
         {
             var cachedData = await _cache.GetAsync(key);
             if (cachedData == null || cachedData.Length == 0)
