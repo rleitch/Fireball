@@ -8,6 +8,7 @@ using Fireball.Common.Extensions;
 using Fireball.FunctionApp.Constants;
 using System.Threading.Tasks;
 using System.Linq;
+using System;
 
 namespace Fireball.FunctionApp
 {
@@ -19,6 +20,8 @@ namespace Fireball.FunctionApp
         [Function("GetFunction")]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "{key}")] HttpRequest req, string key)
         {
+            key = Uri.UnescapeDataString(key);
+            _logger.LogInformation("GET {0}", key);
             var cachedData = await _cache.GetAsync(key);
             if (cachedData == null || cachedData.Length == 0)
             {

@@ -21,11 +21,8 @@ namespace Fireball.Common.Extensions
         {
             using var compressedStream = new MemoryStream(compressedBytes);
             using var decompressedStream = new MemoryStream();
-            using (var gzipStream = new GZipStream(compressedStream, CompressionMode.Decompress))
-            {
-                gzipStream.CopyTo(decompressedStream);
-            }
-
+            using var gzipStream = new GZipStream(compressedStream, CompressionMode.Decompress);
+            gzipStream.CopyTo(decompressedStream);
             return decompressedStream.ToArray();
         }
 

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
 
 namespace Fireball.FunctionApp
@@ -15,6 +16,8 @@ namespace Fireball.FunctionApp
         [Function("RefreshFunction")]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "put", Route = "{key}")] HttpRequest req, string key)
         {
+            key = Uri.UnescapeDataString(key);
+            _logger.LogInformation("REFRESH {0}", key);
             await _cache.RefreshAsync(key);
             return new AcceptedResult();
         }

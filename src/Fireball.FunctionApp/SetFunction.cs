@@ -21,6 +21,8 @@ namespace Fireball.FunctionApp
         [Function("SetFunction")]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "{key}")] HttpRequest req, string key)
         {
+            key = Uri.UnescapeDataString(key);
+            _logger.LogInformation("POST {0}", key);
             DistributedCacheEntryOptions options = new();
 
             if (req.Query.TryGetValue(QueryStringKeys.AbsoluteExpiration, out var absoluteExpirationValue)

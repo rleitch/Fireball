@@ -16,21 +16,21 @@ namespace Fireball.Client
 
         public async Task DeleteAsync(string key, CancellationToken cancellationToken = default)
         {
-            var response = await _httpClient.DeleteAsync(key, cancellationToken);
+            var response = await _httpClient.DeleteAsync(Uri.EscapeDataString(key), cancellationToken);
 
             response.EnsureSuccessStatusCode();
         }
 
         public async Task<string> GetAsync(string key, CancellationToken cancellationToken = default)
         {
-            return await _httpClient.GetStringAsync(key, cancellationToken);
+            return await _httpClient.GetStringAsync(Uri.EscapeDataString(key), cancellationToken);
         }
 
         public async Task<T> GetAsync<T>(string key, JsonSerializerOptions jsonSerializerOptions = null, CancellationToken cancellationToken = default)
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<T>(key, jsonSerializerOptions, cancellationToken);
+                return await _httpClient.GetFromJsonAsync<T>(Uri.EscapeDataString(key), jsonSerializerOptions, cancellationToken);
             }
             catch (JsonException)
             {
@@ -40,8 +40,7 @@ namespace Fireball.Client
 
         public async Task RefreshAsync(string key, CancellationToken cancellationToken = default)
         {
-            var response = await _httpClient.PutAsync(key, null, cancellationToken);
-
+            var response = await _httpClient.PutAsync(Uri.EscapeDataString(key), null, cancellationToken);
             response.EnsureSuccessStatusCode();
         }
 
@@ -53,6 +52,7 @@ namespace Fireball.Client
             JsonSerializerOptions jsonSerializerOptions = null, 
             CancellationToken cancellationToken = default)
         {
+            key = Uri.EscapeDataString(key);
             var queryStringParameters = new HashSet<string>();
             if (absoluteExpiration.HasValue)
             {
@@ -76,6 +76,7 @@ namespace Fireball.Client
 
         public async Task SetStringAsync(string key, string value, TimeSpan? absoluteExpiration = null, TimeSpan? slidingExpiration = null, CancellationToken cancellationToken = default)
         {
+            key = Uri.EscapeDataString(key);
             var queryStringParameters = new HashSet<string>();
             if (absoluteExpiration.HasValue)
             {
