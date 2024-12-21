@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <AzureFunctionsVersion>v4</AzureFunctionsVersion>
-    <OutputType>Exe</OutputType>
+	  <TargetFramework>net8.0</TargetFramework>
+	  <LangVersion>Latest</LangVersion>
+	  <AzureFunctionsVersion>v4</AzureFunctionsVersion>
+	  <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />

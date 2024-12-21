@@ -7,27 +7,48 @@ namespace Fireball.Client
 {
     public interface IFireballClient
     {
-        Task DeleteAsync(string key, CancellationToken cancellationToken = default);
+        Task DeleteAsync(CancellationToken cancellationToken, params string[] keyParts);
 
-        Task<string> GetAsync(string key, CancellationToken cancellationToken = default);
+        Task<string> GetAsync(CancellationToken cancellationToken, params string[] keyParts);
 
-        Task<T> GetAsync<T>(string key, JsonSerializerOptions jsonSerializerOptions = null, CancellationToken cancellationToken = default);
+        Task<T> GetAsync<T>(CancellationToken cancellationToken, params string[] keyParts);
 
-        Task RefreshAsync(string key, CancellationToken cancellationToken = default);
+        Task<T> GetAsync<T>(JsonSerializerOptions jsonSerializerOptions, CancellationToken cancellationToken, params string[] keyParts);
+
+        Task RefreshAsync(CancellationToken cancellationToken, params string[] keyParts);
 
         Task SetAsync<T>(
-            string key,
             T value,
-            TimeSpan? absoluteExpiration = null,
-            TimeSpan? slidingExpiration = null,
-            JsonSerializerOptions jsonSerializerOptions = null,
-            CancellationToken cancellationToken = default);
+            TimeSpan? absoluteExpiration,
+            CancellationToken cancellationToken,
+            params string[] keyParts);
+
+        Task SetAsync<T>(
+            T value,
+            TimeSpan? absoluteExpiration,
+            TimeSpan? slidingExpiration,
+            CancellationToken cancellationToken,
+            params string[] keyParts);
+
+        Task SetAsync<T>(
+            T value,
+            TimeSpan? absoluteExpiration,
+            TimeSpan? slidingExpiration,
+            JsonSerializerOptions jsonSerializerOptions,
+            CancellationToken cancellationToken,
+            params string[] keyParts);
 
         Task SetStringAsync(
-            string key,
             string value,
-            TimeSpan? absoluteExpiration = null,
-            TimeSpan? slidingExpiration = null,
-            CancellationToken cancellationToken = default);
+            TimeSpan? absoluteExpiration,
+            CancellationToken cancellationToken,
+            params string[] keyParts);
+
+        Task SetStringAsync(
+            string value,
+            TimeSpan? absoluteExpiration,
+            TimeSpan? slidingExpiration,
+            CancellationToken cancellationToken,
+            params string[] keyParts);
     }
 }

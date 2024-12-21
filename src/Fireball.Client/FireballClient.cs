@@ -1,4 +1,5 @@
-﻿using Fireball.Common;
+﻿using Fireball.Client.Services;
+using Fireball.Common;
 using Fireball.Common.Extensions;
 using System;
 using System.Collections.Generic;
@@ -14,23 +15,32 @@ namespace Fireball.Client
     {
         private readonly HttpClient _httpClient = httpClient;
 
-        public async Task DeleteAsync(string key, CancellationToken cancellationToken = default)
+        public async Task DeleteAsync(CancellationToken cancellationToken, params string[] keyParts)
         {
-            var response = await _httpClient.DeleteAsync(Uri.EscapeDataString(key), cancellationToken);
+            var key = KeyService.BuildKey(keyParts);
+
+            var response = await _httpClient.DeleteAsync(key, cancellationToken);
 
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task<string> GetAsync(string key, CancellationToken cancellationToken = default)
+        public async Task<string> GetAsync(CancellationToken cancellationToken, params string[] keyParts)
         {
-            return await _httpClient.GetStringAsync(Uri.EscapeDataString(key), cancellationToken);
+            var key = KeyService.BuildKey(keyParts);
+
+            return await _httpClient.GetStringAsync(key, cancellationToken);
         }
 
-        public async Task<T> GetAsync<T>(string key, JsonSerializerOptions jsonSerializerOptions = null, CancellationToken cancellationToken = default)
+        public async Task<T> GetAsync<T>(CancellationToken cancellationToken, params string[] keyParts)
+            => await GetAsync<T>(null, cancellationToken, keyParts);
+
+        public async Task<T> GetAsync<T>(JsonSerializerOptions jsonSerializerOptions, CancellationToken cancellationToken, params string[] keyParts)
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<T>(Uri.EscapeDataString(key), jsonSerializerOptions, cancellationToken);
+                var key = KeyService.BuildKey(keyParts);
+
+                return await _httpClient.GetFromJsonAsync<T>(key, jsonSerializerOptions, cancellationToken);
             }
             catch (JsonException)
             {
@@ -38,46 +48,81 @@ namespace Fireball.Client
             }
         }
 
-        public async Task RefreshAsync(string key, CancellationToken cancellationToken = default)
+        public async Task RefreshAsync(CancellationToken cancellationToken, params string[] keyParts)
         {
-            var response = await _httpClient.PutAsync(Uri.EscapeDataString(key), null, cancellationToken);
+            var key = KeyService.BuildKey(keyParts);
+
+            var response = await _httpClient.PutAsync(key, null, cancellationToken);
+
             response.EnsureSuccessStatusCode();
         }
 
         public async Task SetAsync<T>(
-            string key, 
-            T value, 
-            TimeSpan? absoluteExpiration = null, 
-            TimeSpan? slidingExpiration = null,
-            JsonSerializerOptions jsonSerializerOptions = null, 
-            CancellationToken cancellationToken = default)
+            T value,
+            TimeSpan? absoluteExpiration,
+            CancellationToken cancellationToken,
+            params string[] keyParts)
         {
-            key = Uri.EscapeDataString(key);
-            var queryStringParameters = new HashSet<string>();
-            if (absoluteExpiration.HasValue)
-            {
-                queryStringParameters.Add(absoluteExpiration.Value.ToQueryString(QueryStringKeys.AbsoluteExpiration));
-            }
+            await SetAsync(value, absoluteExpiration, null, cancellationToken, keyParts);
+        }
 
-            if (slidingExpiration.HasValue)
-            {
-                queryStringParameters.Add(slidingExpiration.Value.ToQueryString(QueryStringKeys.SlidingExpiration));
-            }
+        public async Task SetAsync<T>(
+            T value,
+            TimeSpan? absoluteExpiration,
+            TimeSpan? slidingExpiration,
+            CancellationToken cancellationToken,
+            params string[] keyParts)
+        {
+            await SetAsync(value, absoluteExpiration, slidingExpiration, null, cancellationToken, keyParts);
+        }
 
-            if(queryStringParameters.Count > 0)
-            {
-                key = $"{key}?{string.Join("&", queryStringParameters)}";
-            }
+        public async Task SetAsync<T>(
+            T value,
+            TimeSpan? absoluteExpiration,
+            TimeSpan? slidingExpiration,
+            JsonSerializerOptions jsonSerializerOptions,
+            CancellationToken cancellationToken,
+            params string[] keyParts)
+        {
+            var key = BuildSetKey(absoluteExpiration, slidingExpiration, keyParts);
 
             var response = await _httpClient.PostAsJsonAsync(key, value, jsonSerializerOptions, cancellationToken);
 
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task SetStringAsync(string key, string value, TimeSpan? absoluteExpiration = null, TimeSpan? slidingExpiration = null, CancellationToken cancellationToken = default)
+        public async Task SetStringAsync(
+            string value,
+            TimeSpan? absoluteExpiration,
+            CancellationToken cancellationToken,
+            params string[] keyParts)
+            => await SetStringAsync(value, absoluteExpiration, null, cancellationToken, keyParts);
+
+        public async Task SetStringAsync(
+            string value,
+            TimeSpan? absoluteExpiration,
+            TimeSpan? slidingExpiration,
+            CancellationToken cancellationToken,
+            params string[] keyParts)
         {
-            key = Uri.EscapeDataString(key);
+            var key = BuildSetKey(absoluteExpiration, slidingExpiration, keyParts);
+
+            using var content = new StringContent(value);
+
+            var response = await _httpClient.PostAsync(key, content, cancellationToken);
+
+            response.EnsureSuccessStatusCode();
+        }
+
+        private static string BuildSetKey(
+            TimeSpan? absoluteExpiration,
+            TimeSpan? slidingExpiration,
+            params string[] keyParts)
+        {
+            var key = KeyService.BuildKey(keyParts);
+
             var queryStringParameters = new HashSet<string>();
+
             if (absoluteExpiration.HasValue)
             {
                 queryStringParameters.Add(absoluteExpiration.Value.ToQueryString(QueryStringKeys.AbsoluteExpiration));
@@ -93,10 +138,7 @@ namespace Fireball.Client
                 key = $"{key}?{string.Join("&", queryStringParameters)}";
             }
 
-            using var content = new StringContent(value);
-            var response = await _httpClient.PostAsync(key, content, cancellationToken);
-
-            response.EnsureSuccessStatusCode();
+            return key;
         }
     }
 }

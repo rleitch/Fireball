@@ -1,5 +1,4 @@
-﻿using Fireball.Client.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace Fireball.Client.Extensions

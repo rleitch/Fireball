@@ -2,8 +2,8 @@
 {
     public static class QueryStringKeys
     {
-        public static string AbsoluteExpiration = "absoluteExpiration";
+        public const string AbsoluteExpiration = "absoluteExpiration";
 
-        public static string SlidingExpiration = "slidingExpiration";
+        public const string SlidingExpiration = "slidingExpiration";
     }
 }

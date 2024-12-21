@@ -1,6 +1,10 @@
 ﻿using Fireball.Client.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Fireball.Client.Example
 {
@@ -15,22 +19,24 @@ namespace Fireball.Client.Example
             var randomCacheKey = Path.GetRandomFileName();
 
             // Cache empty
-            var empty = await fireballClient.GetAsync(randomCacheKey);
+            var empty = await fireballClient.GetAsync(CancellationToken.None, randomCacheKey);
 
             // Set string
+
             await fireballClient.SetStringAsync(
-                randomCacheKey, 
-                "When you make it to the top, turn and reach down for the person behind you. - Abraham Lincoln");
+                "When you make it to the top, turn and reach down for the person behind you. - Abraham Lincoln",
+                null,
+                CancellationToken.None,
+                randomCacheKey);
 
             // Cache not empty anymore
-            var quote = await fireballClient.GetAsync(randomCacheKey);
+            var quote = await fireballClient.GetAsync(CancellationToken.None, randomCacheKey);
 
             // Touch the record to reset the sliding expiration window
-            await fireballClient.RefreshAsync(randomCacheKey);
+            await fireballClient.RefreshAsync(CancellationToken.None, randomCacheKey);
 
             // Delete from cache
-            await fireballClient.DeleteAsync(randomCacheKey);
-
+            await fireballClient.DeleteAsync(CancellationToken.None, randomCacheKey);
 
         }
 
@@ -38,7 +44,7 @@ namespace Fireball.Client.Example
             Host.CreateDefaultBuilder(args)
             .ConfigureServices((_, services) =>
             {
-                services.AddFireballClient(new Uri("https://fireballfunctionapp.azurewebsites.net/api/"));
+                services.AddFireballClient(new Uri("https://fireballfunctionapp.azurewebsites.net/api/"), string.Empty);
             });
     }
 }
