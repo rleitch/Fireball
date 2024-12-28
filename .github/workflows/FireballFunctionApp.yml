@@ -20,7 +20,7 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
     - name: Setup .NET Core (for inproc extensions)
-      uses: actions/setup-dotnetv4
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ env.DOTNET_CORE_VERSION_INPROC }}
     - name: Restore
@@ -44,7 +44,7 @@ jobs:
         name: functionapp
         path: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
     - name: Azure Login
-      uses: Azure/login@v2
+      uses: azure/login@v2
       with:
         creds: ${{ secrets.FireballFunctionApp_SPN }}
     - name: Deploy to Azure Function App
