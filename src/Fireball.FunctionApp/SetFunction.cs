@@ -1,15 +1,15 @@
+﻿using Fireball.Common.Constants;
+using Fireball.Common.Extensions;
 using Fireball.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
-using System.IO;
 using System;
-using System.Threading.Tasks;
+using System.IO;
 using System.Linq;
-using Fireball.Common.Extensions;
-using Fireball.FunctionApp.Constants;
+using System.Threading.Tasks;
 
 namespace Fireball.FunctionApp
 {

@@ -1,4 +1,4 @@
-﻿namespace Fireball.FunctionApp.Constants
+﻿namespace Fireball.Common.Constants
 {
     public class CompressionFlags
     {

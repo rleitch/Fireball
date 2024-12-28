@@ -2,7 +2,7 @@
   "profiles": {
     "Fireball.FunctionApp": {
       "commandName": "Project",
-      "commandLineArgs": "--port 7269",
+      "commandLineArgs": "--port 7236",
       "launchBrowser": false
     }
   }
