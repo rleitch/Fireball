@@ -27,7 +27,7 @@ namespace Fireball.FunctionApp
             }
 
             byte flag = cachedData[0];
-            byte[] dataBuffer = cachedData.Skip(1).ToArray();
+            byte[] dataBuffer = [.. cachedData.Skip(1)];
             return new OkObjectResult(flag == CompressionFlags.Compressed
                 ? dataBuffer.DecompressString()
                 : Encoding.UTF8.GetString(dataBuffer));

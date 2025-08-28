@@ -9,7 +9,7 @@
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<OutputPath>C:\Users\micro\source\nuget-packages</OutputPath>
-		<Version>1.0.9</Version>
+		<Version>1.0.15</Version>
 	</PropertyGroup>
 
 </Project>

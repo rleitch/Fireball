@@ -9,7 +9,7 @@ namespace Fireball.Common.Extensions
         public static byte[] CompressBytes(this byte[] uncompressedBytes)
         {
             using var memoryStream = new MemoryStream();
-            using (var gzipStream = new GZipStream(memoryStream, CompressionMode.Compress))
+            using (var gzipStream = new GZipStream(memoryStream, CompressionMode.Compress, leaveOpen: true))
             {
                 gzipStream.Write(uncompressedBytes, 0, uncompressedBytes.Length);
             }

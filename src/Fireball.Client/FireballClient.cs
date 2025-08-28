@@ -1,4 +1,5 @@
-﻿using Fireball.Client.Services;
+﻿using Fireball.Client.Configuration;
+using Fireball.Client.Services;
 using Fireball.Common;
 using Fireball.Common.Extensions;
 using System;
@@ -11,13 +12,13 @@ using System.Threading.Tasks;
 
 namespace Fireball.Client
 {
-    public class FireballClient(HttpClient httpClient) : IFireballClient
+    public class FireballClient(HttpClient httpClient, IFireballClientSettings settings) : IFireballClient
     {
         private readonly HttpClient _httpClient = httpClient;
 
         public async Task DeleteAsync(CancellationToken cancellationToken, params string[] keyParts)
         {
-            var key = KeyService.BuildKey(keyParts);
+            var key = KeyService.BuildKey([settings.ApiKey, ..keyParts]);
 
             var response = await _httpClient.DeleteAsync(key, cancellationToken);
 
@@ -26,7 +27,7 @@ namespace Fireball.Client
 
         public async Task<string> GetAsync(CancellationToken cancellationToken, params string[] keyParts)
         {
-            var key = KeyService.BuildKey(keyParts);
+            var key = KeyService.BuildKey([settings.ApiKey, .. keyParts]);
 
             return await _httpClient.GetStringAsync(key, cancellationToken);
         }
@@ -38,7 +39,7 @@ namespace Fireball.Client
         {
             try
             {
-                var key = KeyService.BuildKey(keyParts);
+                var key = KeyService.BuildKey([settings.ApiKey, .. keyParts]);
 
                 return await _httpClient.GetFromJsonAsync<T>(key, jsonSerializerOptions, cancellationToken);
             }
@@ -50,7 +51,7 @@ namespace Fireball.Client
 
         public async Task RefreshAsync(CancellationToken cancellationToken, params string[] keyParts)
         {
-            var key = KeyService.BuildKey(keyParts);
+            var key = KeyService.BuildKey([settings.ApiKey, .. keyParts]);
 
             var response = await _httpClient.PutAsync(key, null, cancellationToken);
 
@@ -114,12 +115,12 @@ namespace Fireball.Client
             response.EnsureSuccessStatusCode();
         }
 
-        private static string BuildSetKey(
+        private string BuildSetKey(
             TimeSpan? absoluteExpiration,
             TimeSpan? slidingExpiration,
             params string[] keyParts)
         {
-            var key = KeyService.BuildKey(keyParts);
+            var key = KeyService.BuildKey([settings.ApiKey, .. keyParts]);
 
             var queryStringParameters = new HashSet<string>();
 

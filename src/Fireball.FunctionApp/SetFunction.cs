@@ -24,16 +24,16 @@ namespace Fireball.FunctionApp
             _logger.LogInformation("POST {0}", key);
             DistributedCacheEntryOptions options = new();
 
-            if (req.Query.TryGetValue(QueryStringKeys.AbsoluteExpiration, out var absoluteExpirationValue)
-                && TimeSpan.TryParse(Uri.UnescapeDataString(absoluteExpirationValue), out TimeSpan absoluteExpiration))
+            if (req.Query.TryGetValue(QueryStringKeys.AbsoluteExpiration, out var absoluteExpirationString)
+                && long.TryParse(absoluteExpirationString, out long absoluteExpiration))
             {
-                options.SetAbsoluteExpiration(absoluteExpiration);
+                options.SetAbsoluteExpiration(TimeSpan.FromTicks(absoluteExpiration));
             }
 
-            if (req.Query.TryGetValue(QueryStringKeys.SlidingExpiration, out var slidingExpirationValue)
-                && TimeSpan.TryParse(Uri.UnescapeDataString(slidingExpirationValue), out TimeSpan slidingExpiration))
+            if (req.Query.TryGetValue(QueryStringKeys.SlidingExpiration, out var slidingExpirationString)
+                && long.TryParse(slidingExpirationString, out long slidingExpiration))
             {
-                options.SetSlidingExpiration(slidingExpiration);
+                options.SetSlidingExpiration(TimeSpan.FromTicks(slidingExpiration));
             }
 
             byte[] requestBody;
@@ -50,8 +50,8 @@ namespace Fireball.FunctionApp
         public async Task SetAsync(string key, byte[] uncompressedData, DistributedCacheEntryOptions options)
         {
             byte[] data = uncompressedData.Length > 1024
-                ? uncompressedData.CompressBytes().Prepend(CompressionFlags.Compressed).ToArray()
-                : uncompressedData.Prepend(CompressionFlags.Uncompressed).ToArray();
+                ? [.. uncompressedData.CompressBytes().Prepend(CompressionFlags.Compressed)]
+                : [.. uncompressedData.Prepend(CompressionFlags.Uncompressed)];
             await _cache.SetAsync(key, data, options);
         }
     }

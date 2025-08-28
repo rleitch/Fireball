@@ -12,21 +12,22 @@ namespace Fireball.Client.Services
         public static string BuildKey(params string[] keyParts)
         {
             var encodedValues = keyParts.Select(Encoding.UTF8.GetBytes).ToArray();
-            var combinedArray = new byte[encodedValues.Sum(v => v.Length)];
+            var totalLength = encodedValues.Sum(v => v.Length);
+            Span<byte> combinedArray = new byte[totalLength];
 
             int offset = 0;
             foreach (var byteArray in encodedValues)
             {
-                Buffer.BlockCopy(byteArray, 0, combinedArray, offset, byteArray.Length);
+                byteArray.CopyTo(combinedArray[offset..]);
                 offset += byteArray.Length;
             }
-
-            return ToBaseAlphabet(Shake256.HashData(combinedArray, 32));
+            
+            return ToBaseAlphabet(SHA256.HashData(combinedArray));
         }
 
-        public static string ToBaseAlphabet(byte[] byteArray)
+        private static string ToBaseAlphabet(byte[] byteArray)
         {
-            var sb = new StringBuilder();
+            var sb = new StringBuilder(byteArray.Length);
             foreach (var b in byteArray)
             {
                 sb.Append(BaseAlphabet[b % BaseAlphabet.Length]);
